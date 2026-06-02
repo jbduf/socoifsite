@@ -630,6 +630,17 @@
       grid-column: span 2;
     }
 
+    .gallery-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition);
+    }
+
+    .gallery-item:hover .gallery-image {
+      transform: scale(1.05);
+    }
+
     .gallery-placeholder {
       width: 100%;
       height: 100%;
@@ -642,6 +653,7 @@
       letter-spacing: 1px;
       gap: 10px;
       transition: all var(--transition);
+      background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
     }
 
     .gallery-placeholder-icon {
@@ -890,6 +902,11 @@
       font-size: 28px;
       color: var(--white);
       margin-bottom: 28px;
+    }
+
+    /* GALERIE PHOTOS */
+    .gallery-data {
+      display: none;
     }
 
     .form-group {
@@ -1299,52 +1316,11 @@
       <h2 class="section-title">Galerie</h2>
       <p class="section-subtitle">Des réalisations qui parlent d'elles-mêmes. Chaque coupe, chaque couleur, une signature.</p>
     </div>
-    <div class="gallery-grid fade-up">
-      <div class="gallery-item">
-        <div class="gallery-placeholder">
-          <div class="gallery-placeholder-icon">🖼️</div>
-          Photo principale<br/>du salon
-        </div>
-        <div class="gallery-overlay"></div>
-      </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder">
-          <div class="gallery-placeholder-icon">✂️</div>
-          Coupe
-        </div>
-        <div class="gallery-overlay"></div>
-      </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder">
-          <div class="gallery-placeholder-icon">💫</div>
-          Coloration
-        </div>
-        <div class="gallery-overlay"></div>
-      </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder">
-          <div class="gallery-placeholder-icon">🌟</div>
-          Mise en forme &amp; Style
-        </div>
-        <div class="gallery-overlay"></div>
-      </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder">
-          <div class="gallery-placeholder-icon">💛</div>
-          Soin
-        </div>
-        <div class="gallery-overlay"></div>
-      </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder">
-          <div class="gallery-placeholder-icon">🔆</div>
-          Blond
-        </div>
-        <div class="gallery-overlay"></div>
-      </div>
+    <div class="gallery-grid fade-up" id="galleryGrid">
+      <!-- Les images seront ajoutées ici via JavaScript -->
     </div>
     <div class="gallery-cta fade-up" style="margin-top:32px;text-align:center;">
-      <p style="color:rgba(255,255,255,0.35);font-size:13px;margin-bottom:16px;">Les photos du salon seront ajoutées prochainement</p>
+      <p style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:16px;">Galerie de nos réalisations</p>
     </div>
   </div>
 </section>
@@ -1617,6 +1593,40 @@
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
   fadeEls.forEach(el => fadeObserver.observe(el));
+
+  /* GALERIE PHOTOS */
+  function loadGallery() {
+    const galleryGrid = document.getElementById('galleryGrid');
+    if (!galleryGrid) return;
+
+    // Array des photos - vos photos réelles + placeholders
+    const photos = [
+      { src: 'images/photo1.jpg', title: 'Notre salon', span: 2, row: 2 },
+      { src: 'images/photo2.jpg', title: 'Coupes et styles', span: 1 },
+      { src: 'images/photo3.jpg', title: 'Coloration et soins', span: 1 },
+      { src: 'images/photo4.jpg', title: 'Mise en forme boucles', span: 2 },
+      { src: 'images/photo5.jpg', title: 'Soin profond', span: 1 },
+      { src: 'images/photo6.jpg', title: 'Blond éclat', span: 1 },
+    ];
+
+    // Générer les éléments
+    photos.forEach((photo, index) => {
+      const item = document.createElement('div');
+      item.className = 'gallery-item';
+      if (photo.span === 2) item.style.gridColumn = 'span 2';
+      if (photo.row) item.style.gridRow = 'span ' + photo.row;
+
+      item.innerHTML = `
+        <img src="${photo.src}" alt="${photo.title}" class="gallery-image" onerror="this.parentElement.innerHTML='<div class=gallery-placeholder><div class=gallery-placeholder-icon>🖼️</div>Ajouter: ${photo.title}</div><div class=gallery-overlay></div>'" />
+        <div class="gallery-overlay"></div>
+      `;
+
+      galleryGrid.appendChild(item);
+    });
+  }
+
+  // Charger la galerie
+  window.addEventListener('load', loadGallery);
 
   /* FORM */
   function submitForm(e) {
